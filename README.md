@@ -1,1 +1,1 @@
-# DeFiDashboard
+DeFiDashboard is a Python-based project that leverages Flask for backend development, focusing on the decentralized finance (DeFi) ecosystem. It features a straightforward Flask application, designed to handle essential DeFi functionalities including the retrieval of DeFi data, submission of transactions, and accessing transaction histories. This project aims to provide an accessible interface for interacting with DeFi protocols, enhancing the user experience for both developers and end-users in the DeFi space.
