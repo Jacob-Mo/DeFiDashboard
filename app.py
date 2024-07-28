@@ -4,26 +4,26 @@ import json
 
 app = Flask(__name__)
 
-defi_data = {
+defi_assets = {
     "tokens": [{"name": "Token A", "value": 100}, {"name": "Token B", "value": 200}],
     "prices": {"Token A": "$1", "Token B": "$2"}
 }
 
-transaction_history = []
+transactions_log = []
 
-@app.route('/fetch-defi-data', methods=['GET'])
-def fetch_defi_data():
-    return jsonify(defi_data), 200
+@app.route('/get-defi-assets', methods=['GET']) 
+def get_defi_assets():
+    return jsonify(defi_assets), 200
 
-@app.route('/submit-transaction', methods=['POST'])
-def submit_transaction():
-    data = request.json
-    transaction_history.append(data)
-    return jsonify({"message": "Transaction submitted successfully", "data": data}), 200
+@app.route('/log-transaction', methods=['POST']) 
+def log_transaction():
+    transaction = request.json
+    transactions_log.append(transaction)
+    return jsonify({"message": "Transaction logged successfully", "transaction": transaction}), 200
 
-@app.route('/fetch-transaction-history', methods=['GET'])
-def fetch_transaction_history():
-    return jsonify(transaction_history), 200
+@app.route('/get-transaction-history', methods=['GET']) 
+def get_transaction_history():
+    return jsonify(transactions_log), 200
 
 if __name__ == '__main__':
     from dotenv import load_dotenv
