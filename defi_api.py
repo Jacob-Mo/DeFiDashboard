@@ -1,5 +1,4 @@
 import requests
-import os
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -8,28 +7,17 @@ UNISWAP_BASE_URL = "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2"
 AAVE_BASE_URL = "https://api.thegraph.com/subgraphs/name/aave/protocol-multy-raw"
 COMP_BASE_URL = "https://api.compound.finance/api/v2/cToken"
 
-def fetch_uniswap_data(query):
-    headers = {"Content-Type": "application/json"}
-    response = requests.post(UNISWAP_BASE_URL, json={'query': query}, headers=headers)
-    if response.status_code == 200:
-        return response.json()
-    else:
-        return {"error": response.text}
+# Creating a global session object for reuse
+session = requests.Session()
+session.headers.update({"Content-Type": "application/json"})  # Most API uses JSON
 
-def fetch_aave_data(query):
-    headers = {"Content-Type": "application/json"}
-    response = requests.post(AAVE_BASE_URL, json={'query': query}, headers=headers)
-    if response.status_code == 200:
-        return response.json()
-    else:
-        return {"error": response.text}
+def fetch_graphql_data(base_url, query):
+    response = session.post(base_url, json={'query': query})
+    return response.json() if response.status_code == 200 else {"error": response.text}
 
 def fetch_compound_data():
-    response = requests.get(COMP_BASE_URL)
-    if response.status_code == 200:
-        return response.json()
-    else:
-        return {"error": response.text}
+    response = session.get(COMP_BASE_URL)
+    return response.json() if response.status_code == 200 else {"error": response.text}
 
 query_uniswap = """
 {
@@ -48,7 +36,8 @@ query_uniswap = """
 }
 """
 
-uniswap_data = fetch_uniswap_data(query_uniswap)
+# Reusing a single fetch function for GraphQL APIs
+uniswap_data = fetch_graphql_data(UNISWAP_BASE_URL, query_uniswap)
 print(uniswap_data)
 
 aave_query = """
@@ -62,7 +51,7 @@ aave_query = """
   }
 }
 """
-aave_data = fetch_aave_data(aave_query)
+aave_data = fetch_graphql_data(AAVE_BASE_URL, aave_query)
 print(aave_data)
 
 compound_data = fetch_compound_data()
