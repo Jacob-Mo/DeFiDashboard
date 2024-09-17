@@ -1,32 +1,32 @@
 require('dotenv').config();
 
-const dbUser = process.env.DB_USER;
-const dbPassword = process.env.DB_PASSWORD;
+const databaseUsername = process.env.DB_USER;
+const databasePassword = process.env.DB_PASSWORD;
 
 console.log('Deploying with the following configuration:');
-console.log(`DB User: ${dbUser}`);
-console.log(`DB Password: ${dbPassword}`);
+console.log(`Database User: ${databaseUsername}`);
+console.log(`Database Password: ${databasePassword}`);
 
-function simulateDatabaseConnection(dbUser, dbPassword, callback) {
+function checkDatabaseConnection(databaseUsername, databasePassword, connectionCallback) {
     setTimeout(() => {
-        if (dbUser && dbPassword) {
+        if (databaseUsername && databasePassword) {
             console.log('Database connection successful.');
-            callback(true);
+            connectionCallback(true);
         } else {
             console.log('Database connection failed. Check configuration.');
-            callback(false);
+            connectionCallback(false);
         }
     }, 1000);
 }
 
-function deploy() {
-    if (!dbUser || !dbPassword) {
+function initiateDeployment() {
+    if (!databaseUsername || !databasePassword) {
         console.error('Missing environment variables. Deployment aborted.');
         return;
     }
 
-    simulateDatabaseConnection(dbUser, dbPassword, (isConnected) => {
-        if (!isConnected) {
+    checkDatabaseConnection(databaseUsername, databasePassword, (isConnectionSuccessful) => {
+        if (!isConnectionSuccessful) {
             console.error('Deployment aborted due to database connection failure.');
             return;
         }
@@ -38,4 +38,4 @@ function deploy() {
     });
 }
 
-deploy();
+initiateDeployment();
