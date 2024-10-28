@@ -1,8 +1,9 @@
-import express from 'express';
+import express, {Request, Response} from 'express';
 import path from 'path';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import { StaticRouter as Router, Route, Switch } from 'react-router-dom';
+import axios from 'axios';
 
 const PORT = process.env.PORT || 3000;
 const BUILD_PATH = process.env.BUILD_PATH || 'build';
@@ -25,9 +26,19 @@ const App = () => (
   </Router>
 );
 
+app.get('/api/crypto', async (req: Request, res: Response) => {
+  try {
+    const response = await axios.get('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd');
+    res.json(response.data);
+  } catch (error) {
+    console.error('API call error:', error);
+    res.status(500).json({ error: 'Failed to fetch data' });
+  }
+});
+
 app.get('/*', (req, res) => {
   const context = {};
-  const app = ReactDOMServer.renderToString(<App />);
+  const renderedApp = ReactDOMServer.renderToString(<App />);
 
   const html = `
     <!doctype html>
@@ -36,7 +47,7 @@ app.get('/*', (req, res) => {
         <title>DeFi Dashboard</title>
       </head>
       <body>
-        <div id="root">${app}</div>
+        <div id="root">${renderedApp}</div>
       </body>
     </html>
   `;
@@ -51,3 +62,32 @@ app.get('/*', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+```
+
+```typescript
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+
+const DeFiDashboard = () => {
+  const [cryptoData, setCryptoData] = useState({});
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('/api/crypto');
+        setCryptoData(response.data);
+      } catch (error) {
+        console.error('Error fetching crypto data:', error);
+      }
+    };
+    
+    fetchData();
+  }, []);
+
+  return (
+    <div>
+      <h1>DeFi Dashboard</h1>
+      <pre>{JSON.stringify(cryptoData, null, 2)}</pre>
+    </div>
+  );
+};
