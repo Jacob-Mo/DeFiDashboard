@@ -23,17 +23,15 @@ export const renderDashboard = (dashboardData: Dashboard): string => {
 };
 
 export const renderTransactionHistory = (transactions: Transaction[]): string => {
-  let transactionHistory = "Transaction History:\n";
-  transactions.forEach((transaction) => {
-    transactionHistory += `Date: ${transaction.date}, Amount: ${transaction.amount}, Type: ${transaction.type}\n`;
-  });
-  return transactionHistory;
+  const transactionHistoryLines = transactions.map(transaction =>
+    `Date: ${transaction.date}, Amount: ${transaction.amount}, Type: ${transaction.type}`
+  );
+  return `Transaction History:\n${transactionHistoryLines.join('\n')}`;
 };
 
 export const renderNotifications = (notifications: Notification[]): string => {
-  let notificationOutput = "Notifications:\n";
-  notifications.forEach((notification) => {
-    notificationOutput += `Message: ${notification.message}, Timestamp: ${notification.timestamp.toLocaleString()}\n`;
-  });
-  return notificationOutput;
+  const notificationLines = notifications.map(notification =>
+    `Message: ${notification.message}, Timestamp: ${notification.timestamp.toLocaleString()}`
+  );
+  return `Notifications:\n${notificationLines.join('\n')}`;
 };
